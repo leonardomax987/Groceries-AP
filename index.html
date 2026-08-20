@@ -31,46 +31,56 @@
     h1{ margin:0; font-size:20px; letter-spacing:.2px; }
     .sub{ color:var(--muted); font-size:13px; line-height:1.3; max-width:720px; }
     .tabs{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-    .tab{ border:1px solid var(--border); background:var(--panel); padding:10px 12px; border-radius:12px; cursor:pointer; user-select:none; box-shadow:var(--shadow); font-weight:600; font-size:13px; }
+    .tab{ border:1px solid var(--border); background:var(--panel); padding:10px 14px; border-radius:12px; cursor:pointer; user-select:none; box-shadow:var(--shadow); font-weight:600; font-size:13px; }
     .tab[aria-selected="true"]{ border-color:rgba(31,90,58,.35); background:linear-gradient(180deg,rgba(59,138,90,.18),rgba(59,138,90,.08)); color:var(--green-700); }
     .content{ display:block; margin-top:12px; }
-    .viewArea,.editArea{ display:none; }
-    .viewArea.active,.editArea.active{ display:block; }
+    .viewArea,.editArea,.logArea{ display:none; }
+    .viewArea.active,.editArea.active,.logArea.active{ display:block; }
+
+    /* Grid */
     .grid{ display:grid; grid-template-columns:repeat(6,minmax(200px,1fr)); gap:12px; align-items:start; }
     @media(max-width:1050px){ .grid{ grid-template-columns:repeat(3,minmax(220px,1fr)); } }
     @media(max-width:680px){ .grid{ grid-template-columns:repeat(1,minmax(240px,1fr)); } }
+
     .col{ border:1px solid var(--border); background:rgba(251,247,234,.78); border-radius:16px; box-shadow:var(--shadow); padding:12px; overflow:hidden; }
     .colHead{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:10px; }
     .colName{ font-weight:800; letter-spacing:.2px; font-size:14px; display:flex; flex-direction:column; gap:6px; }
     .seal{ display:inline-flex; align-items:center; gap:8px; padding:8px 10px; border-radius:999px; border:1px solid rgba(31,107,70,.35); background:rgba(31,107,70,.10); color:var(--seal); font-weight:800; font-size:12px; white-space:nowrap; height:30px; opacity:0; transform:translateY(-4px); transition:.2s ease; }
     .seal.on{ opacity:1; transform:translateY(0); }
     .items{ display:flex; flex-direction:column; gap:8px; max-height:62vh; overflow:auto; padding-right:4px; }
-    .item{ display:grid; grid-template-columns:26px 1fr; gap:10px; align-items:center; border:1px solid rgba(31,42,31,.10); border-radius:12px; padding:8px 10px; background:var(--unchecked-bg); cursor:pointer; }
+    .item{ display:grid; grid-template-columns:26px 1fr auto; gap:8px; align-items:center; border:1px solid rgba(31,42,31,.10); border-radius:12px; padding:8px 10px; background:var(--unchecked-bg); }
     .item.checked{ background:var(--checked-bg); border-color:rgba(31,107,70,.25); }
     .check{ width:18px; height:18px; border-radius:6px; accent-color:var(--green-600); cursor:pointer; }
     .itemLabel{ display:flex; flex-direction:column; gap:4px; min-width:0; }
     .itemLabel .name{ font-weight:700; font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .itemLabel .meta{ color:var(--muted); font-size:11px; line-height:1.2; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .itemLabel .meta{ color:var(--muted); font-size:11px; line-height:1.2; }
+    .deleteBtn{ background:none; border:none; cursor:pointer; color:var(--muted); font-size:15px; padding:2px 5px; border-radius:6px; line-height:1; flex-shrink:0; }
+    .deleteBtn:hover{ color:#b03a2e; background:rgba(176,58,46,.08); }
+
     .rightActions{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:12px; justify-content:space-between; }
     .btn{ border:1px solid var(--border); background:var(--panel); padding:10px 12px; border-radius:12px; cursor:pointer; font-weight:800; font-size:13px; box-shadow:var(--shadow); }
     .btn.primary{ border-color:rgba(31,90,58,.35); background:linear-gradient(180deg,rgba(43,107,69,.22),rgba(43,107,69,.10)); color:var(--green-700); }
-    .editArea .panel{ border:1px solid var(--border); background:rgba(251,247,234,.78); border-radius:16px; box-shadow:var(--shadow); padding:14px; margin-bottom:12px; }
+
+    /* Edit panel */
+    .panel{ border:1px solid var(--border); background:rgba(251,247,234,.78); border-radius:16px; box-shadow:var(--shadow); padding:14px; margin-bottom:12px; }
     .formRow{ display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; }
     label{ display:flex; flex-direction:column; gap:6px; font-weight:700; font-size:13px; color:var(--ink); }
-    input[type="text"],select{ border:1px solid rgba(31,42,31,.18); background:#fff; padding:10px 12px; border-radius:12px; min-width:240px; outline:none; }
+    input[type="text"],select{ border:1px solid rgba(31,42,31,.18); background:#fff; padding:10px 12px; border-radius:12px; min-width:240px; outline:none; font-size:13px; }
     .smallHint{ color:var(--muted); font-size:12px; margin-top:8px; line-height:1.35; }
-    .logBox{ margin-top:10px; border-top:1px dashed rgba(31,42,31,.16); padding-top:12px; display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-    @media(max-width:860px){ .logBox{ grid-template-columns:1fr; } }
-    .logItem{ border:1px solid rgba(31,42,31,.12); background:rgba(255,255,255,.7); border-radius:14px; padding:12px; }
-    .logItem h3{ margin:0 0 8px 0; font-size:13px; }
-    .logScroll{ max-height:220px; overflow:auto; padding-right:4px; }
-    .logLine{ font-size:12px; color:var(--muted); display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 10px; border-radius:12px; border:1px solid rgba(31,42,31,.08); background:rgba(243,239,227,.6); margin-bottom:8px; }
-    .tag{ font-weight:900; font-size:11px; padding:6px 8px; border-radius:999px; border:1px solid rgba(31,42,31,.12); background:#fff; color:var(--ink); flex:0 0 auto; }
+
+    /* Log tab */
+    .logGrid{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+    @media(max-width:900px){ .logGrid{ grid-template-columns:repeat(2,1fr); } }
+    @media(max-width:580px){ .logGrid{ grid-template-columns:1fr; } }
+    .logCol{ border:1px solid var(--border); background:rgba(251,247,234,.78); border-radius:16px; box-shadow:var(--shadow); padding:12px; }
+    .logCol h3{ margin:0 0 10px 0; font-size:14px; font-weight:800; }
+    .logScroll{ max-height:300px; overflow:auto; padding-right:4px; }
+    .logLine{ font-size:12px; display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 10px; border-radius:12px; border:1px solid rgba(31,42,31,.08); background:rgba(243,239,227,.6); margin-bottom:8px; }
+    .logLine .itemName{ font-weight:700; color:var(--ink); flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .tag{ font-weight:900; font-size:11px; padding:5px 8px; border-radius:999px; border:1px solid rgba(31,42,31,.12); background:#fff; color:var(--ink); flex-shrink:0; }
     .tag.checked{ border-color:rgba(31,107,70,.30); color:var(--seal); }
     .tag.unchecked{ border-color:rgba(90,58,34,.25); color:var(--brown-700); }
     .empty{ color:var(--muted); font-size:12px; padding:10px; border:1px dashed rgba(31,42,31,.20); border-radius:12px; background:rgba(255,255,255,.4); }
-    .deleteBtn{ background:none; border:none; cursor:pointer; color:var(--muted); font-size:14px; padding:2px 4px; border-radius:6px; line-height:1; }
-    .deleteBtn:hover{ color:#b03a2e; background:rgba(176,58,46,.08); }
   </style>
 </head>
 <body>
@@ -78,25 +88,27 @@
     <header>
       <div class="title">
         <h1>🛒 Roommates Groceries</h1>
-        <div class="sub">
-          Main (Shared) + Marcos, Leo, Rafa, Alex, Igor. All lists start empty — add items freely. Shared-base foods will prompt you to add to Main or keep personal.
-        </div>
+        <div class="sub">Main (Shared) + Marcos, Leo, Rafa, Alex, Igor. Items checked yesterday or earlier move to the Log tab automatically.</div>
       </div>
       <div class="tabs" role="tablist">
         <div class="tab" id="tabView" role="tab" aria-selected="true" tabindex="0">View / Check</div>
         <div class="tab" id="tabEdit" role="tab" aria-selected="false" tabindex="0">Edit / Add</div>
+        <div class="tab" id="tabLog" role="tab" aria-selected="false" tabindex="0">Log</div>
       </div>
     </header>
 
     <div class="content">
+
+      <!-- VIEW TAB -->
       <section class="viewArea active" id="viewArea">
         <div class="grid" id="columnsGrid"></div>
         <div class="rightActions">
           <button class="btn" id="btnRefresh">🔄 Refresh</button>
-          <div class="smallHint" style="margin:0;">Changes sync after refresh. Check/uncheck any item to track it.</div>
+          <div class="smallHint" style="margin:0;">Items checked on a previous day move to the Log tab after refresh.</div>
         </div>
       </section>
 
+      <!-- EDIT TAB -->
       <section class="editArea" id="editArea">
         <div class="panel">
           <div class="formRow">
@@ -110,27 +122,21 @@
             </label>
             <button class="btn primary" id="btnAdd">Add</button>
           </div>
-          <div class="smallHint" id="addHint">
-            Known shared foods (arroz, ovo, queijo, etc.) will ask if you want to add to <b>Main</b> or keep personal.
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="logBox">
-            <div class="logItem">
-              <h3>Item log</h3>
-              <div class="smallHint" style="margin:0 0 10px 0;" id="logMeta">Click any item row (not the checkbox) in View / Check to see its history.</div>
-              <div class="logScroll" id="logScroll"></div>
-            </div>
-            <div class="logItem">
-              <h3>How it works</h3>
-              <div class="smallHint" style="margin:0;">
-                Every check and uncheck is logged with the date. When all items in a column are checked, a green <b>Sealed</b> badge appears. Adding the same catalog food to Main from any device merges into one item — no duplicates.
-              </div>
-            </div>
+          <div class="smallHint">
+            Known shared foods will ask if you want to add to <b>Main</b> or keep personal.
           </div>
         </div>
       </section>
+
+      <!-- LOG TAB -->
+      <section class="logArea" id="logArea">
+        <div class="rightActions" style="margin-bottom:12px; margin-top:0;">
+          <div class="smallHint" style="margin:0;">All checked/unchecked events. Items that were checked on a previous day no longer appear in the main list.</div>
+          <button class="btn" id="btnRefreshLog">🔄 Refresh</button>
+        </div>
+        <div class="logGrid" id="logGrid"></div>
+      </section>
+
     </div>
   </div>
 
