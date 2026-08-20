@@ -22,7 +22,9 @@
       --unchecked-bg: rgba(90, 58, 34, .06);
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -121,11 +123,15 @@
     }
 
     @media (max-width: 1200px) {
-      .grid { grid-template-columns: repeat(3, minmax(220px, 1fr)); }
+      .grid {
+        grid-template-columns: repeat(3, minmax(220px, 1fr));
+      }
     }
 
     @media (max-width: 700px) {
-      .grid { grid-template-columns: 1fr; }
+      .grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     .col,
@@ -136,6 +142,11 @@
       border-radius: 16px;
       box-shadow: var(--shadow);
       padding: 12px;
+    }
+
+    /* Important: lets the ⋮ dropdown appear outside its column */
+    .col {
+      overflow: visible;
     }
 
     .colHead {
@@ -185,8 +196,7 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
-      max-height: 64vh;
-      overflow: auto;
+      overflow: visible;
       padding-right: 3px;
     }
 
@@ -257,6 +267,7 @@
 
     .moreMenu {
       position: relative;
+      z-index: 100;
     }
 
     .moreBtn {
@@ -273,18 +284,21 @@
     .moveMenu {
       display: none;
       position: absolute;
-      z-index: 50;
+      z-index: 9999;
       right: 0;
       top: 28px;
       width: 165px;
       padding: 6px;
       border: 1px solid var(--border);
       border-radius: 12px;
-      background: var(--panel);
-      box-shadow: 0 10px 24px rgba(0, 0, 0, .16);
+      background: #fbf7ea;
+      color: #1f2a1f;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, .22);
     }
 
-    .moveMenu.open { display: block; }
+    .moveMenu.open {
+      display: block;
+    }
 
     .moveMenuTitle {
       color: var(--muted);
@@ -350,7 +364,9 @@
       outline: none;
     }
 
-    select { min-width: 210px; }
+    select {
+      min-width: 210px;
+    }
 
     textarea {
       width: 100%;
@@ -365,11 +381,15 @@
     }
 
     @media (max-width: 900px) {
-      .logGrid { grid-template-columns: repeat(2, minmax(240px, 1fr)); }
+      .logGrid {
+        grid-template-columns: repeat(2, minmax(240px, 1fr));
+      }
     }
 
     @media (max-width: 580px) {
-      .logGrid { grid-template-columns: 1fr; }
+      .logGrid {
+        grid-template-columns: 1fr;
+      }
     }
 
     .logCol h3 {
