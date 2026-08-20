@@ -13,62 +13,67 @@ const LIST_ORDER = [
 ];
 
 const FOOD_BASE = [
-  { baseKey:"arroz",        namePT:"arroz",         nameEN:"rice",         variants:["arroz","rice"] },
-  { baseKey:"massa",        namePT:"massa",         nameEN:"pasta",        variants:["massa","massas","pasta"] },
-  { baseKey:"sal",          namePT:"sal",           nameEN:"salt",         variants:["sal","salt"] },
-  { baseKey:"azeite",       namePT:"azeite",        nameEN:"olive oil",    variants:["azeite","olive oil","oleo de oliva","oleo oliva"] },
-  { baseKey:"cebola",       namePT:"cebola",        nameEN:"onion",        variants:["cebola","onion","onions"] },
-  { baseKey:"tomate",       namePT:"tomate",        nameEN:"tomato",       variants:["tomate","tomato","tomatoes"] },
-  { baseKey:"banana",       namePT:"banana",        nameEN:"banana",       variants:["banana","bananas"] },
-  { baseKey:"limao",        namePT:"limao",         nameEN:"lime / lemon", variants:["limao","limão","lime","lemon"] },
-  { baseKey:"morango",      namePT:"morango",       nameEN:"strawberry",   variants:["morango","strawberry","strawberries"] },
-  { baseKey:"uva",          namePT:"uva",           nameEN:"grape",        variants:["uva","grape","grapes"] },
-  { baseKey:"pimentao",     namePT:"pimentao",      nameEN:"bell pepper",  variants:["pimentao","pimentão","bell pepper","pepper","peppers"] },
-  { baseKey:"ovo",          namePT:"ovo",           nameEN:"egg",          variants:["ovo","ovos","egg","eggs"] },
-  { baseKey:"queijo",       namePT:"queijo",        nameEN:"cheese",       variants:["queijo","cheese","cheeses"] },
-  { baseKey:"pao",          namePT:"pão",           nameEN:"bread",        variants:["pao","pão","bread","breads"] },
-  { baseKey:"manteiga",     namePT:"manteiga",      nameEN:"butter",       variants:["manteiga","butter"] },
-  { baseKey:"yogurte_grego",namePT:"iogurte grego", nameEN:"greek yogurt", variants:["iogurte grego","iogurte","yogurte grego","greek yogurt","yogurt","yogurt grego"] },
-  { baseKey:"batata",       namePT:"batata",        nameEN:"potato",       variants:["batata","potato","potatoes"] },
-  { baseKey:"cenoura",      namePT:"cenoura",       nameEN:"carrot",       variants:["cenoura","carrot","carrots"] },
+  { baseKey:"arroz",         namePT:"arroz",         nameEN:"rice",         variants:["arroz","rice"] },
+  { baseKey:"massa",         namePT:"massa",         nameEN:"pasta",        variants:["massa","massas","pasta"] },
+  { baseKey:"sal",           namePT:"sal",           nameEN:"salt",         variants:["sal","salt"] },
+  { baseKey:"azeite",        namePT:"azeite",        nameEN:"olive oil",    variants:["azeite","olive oil","oleo de oliva","oleo oliva"] },
+  { baseKey:"cebola",        namePT:"cebola",        nameEN:"onion",        variants:["cebola","onion","onions"] },
+  { baseKey:"tomate",        namePT:"tomate",        nameEN:"tomato",       variants:["tomate","tomato","tomatoes"] },
+  { baseKey:"banana",        namePT:"banana",        nameEN:"banana",       variants:["banana","bananas"] },
+  { baseKey:"limao",         namePT:"limao",         nameEN:"lime / lemon", variants:["limao","limão","lime","lemon"] },
+  { baseKey:"morango",       namePT:"morango",       nameEN:"strawberry",   variants:["morango","strawberry","strawberries"] },
+  { baseKey:"uva",           namePT:"uva",           nameEN:"grape",        variants:["uva","grape","grapes"] },
+  { baseKey:"pimentao",      namePT:"pimentao",      nameEN:"bell pepper",  variants:["pimentao","pimentão","bell pepper","pepper","peppers"] },
+  { baseKey:"ovo",           namePT:"ovo",           nameEN:"egg",          variants:["ovo","ovos","egg","eggs"] },
+  { baseKey:"queijo",        namePT:"queijo",        nameEN:"cheese",       variants:["queijo","cheese","cheeses"] },
+  { baseKey:"pao",           namePT:"pão",           nameEN:"bread",        variants:["pao","pão","bread","breads"] },
+  { baseKey:"manteiga",      namePT:"manteiga",      nameEN:"butter",       variants:["manteiga","butter"] },
+  { baseKey:"yogurte_grego", namePT:"iogurte grego", nameEN:"greek yogurt", variants:["iogurte grego","iogurte","yogurte grego","greek yogurt","yogurt","yogurt grego"] },
+  { baseKey:"batata",        namePT:"batata",        nameEN:"potato",       variants:["batata","potato","potatoes"] },
+  { baseKey:"cenoura",       namePT:"cenoura",       nameEN:"carrot",       variants:["cenoura","carrot","carrots"] },
 ];
 
 function normalizeText(s){
   return (s ?? "").toString().trim().toLowerCase()
-    .normalize("NFD").replace(/\p{Diacritic}/gu, "").replace(/\s+/g," ");
+    .normalize("NFD").replace(/\p{Diacritic}/gu,"").replace(/\s+/g," ");
 }
 
 const variantMap = new Map();
-for (const item of FOOD_BASE){
-  for (const v of item.variants){
+for (const item of FOOD_BASE)
+  for (const v of item.variants)
     variantMap.set(normalizeText(v), item);
-  }
-}
+
+// Today's date string YYYY-MM-DD
+function today(){ return new Date().toISOString().slice(0,10); }
 
 const els = {
   tabView:          document.getElementById("tabView"),
   tabEdit:          document.getElementById("tabEdit"),
+  tabLog:           document.getElementById("tabLog"),
   viewArea:         document.getElementById("viewArea"),
   editArea:         document.getElementById("editArea"),
+  logArea:          document.getElementById("logArea"),
   columnsGrid:      document.getElementById("columnsGrid"),
   btnRefresh:       document.getElementById("btnRefresh"),
+  btnRefreshLog:    document.getElementById("btnRefreshLog"),
   targetListSelect: document.getElementById("targetListSelect"),
   addInput:         document.getElementById("addInput"),
   btnAdd:           document.getElementById("btnAdd"),
-  logMeta:          document.getElementById("logMeta"),
-  logScroll:        document.getElementById("logScroll"),
+  logGrid:          document.getElementById("logGrid"),
 };
 
 function setTab(which){
-  const view = which === "view";
-  els.tabView.setAttribute("aria-selected", String(view));
-  els.tabEdit.setAttribute("aria-selected", String(!view));
-  els.viewArea.classList.toggle("active", view);
-  els.editArea.classList.toggle("active", !view);
+  ["view","edit","log"].forEach(t => {
+    els[`tab${t.charAt(0).toUpperCase()+t.slice(1)}`].setAttribute("aria-selected", String(t===which));
+    els[`${t}Area`].classList.toggle("active", t===which);
+  });
+  if (which === "log") renderLogTab();
 }
 els.tabView.addEventListener("click", () => setTab("view"));
 els.tabEdit.addEventListener("click", () => setTab("edit"));
+els.tabLog.addEventListener("click",  () => setTab("log"));
 els.btnRefresh.addEventListener("click", () => loadAll());
+els.btnRefreshLog.addEventListener("click", () => renderLogTab());
 
 const STATE = {
   lists: [],
@@ -111,7 +116,7 @@ async function loadItemsWithState(){
 
   const byList = new Map();
   for (const id of listIds) byList.set(id, []);
-  for (const it of data ?? []) byList.get(it.list_id).push(it);
+  for (const it of data ?? []) byList.get(it.list_id)?.push(it);
   STATE.itemsByListId = byList;
 }
 
@@ -122,17 +127,14 @@ async function loadAll(){
     await loadItemsWithState();
     renderColumns();
     populateEditSelect();
-  }catch(e){
+  } catch(e){
     console.error(e);
     alert("Failed to load. Check your Supabase connection.");
   }
 }
 
 function itemDisplayName(it){
-  if (it.catalog_id){
-    const c = it.app_food_catalog;
-    return c?.name_pt ?? c?.base_key ?? "Item";
-  }
+  if (it.catalog_id) return it.app_food_catalog?.name_pt ?? "Item";
   return it.custom_text;
 }
 
@@ -144,14 +146,23 @@ function itemMetaText(it){
   return "custom item";
 }
 
+// An item should be hidden from the main view if it was checked on a PREVIOUS day
+function isArchivedToLog(it){
+  const state = it.app_list_item_state;
+  if (!state?.checked) return false;
+  if (!state?.checked_at) return false;
+  const checkedDay = state.checked_at.slice(0,10);
+  return checkedDay < today();
+}
+
 function sortItems(items){
-  return items.slice().sort((a,b) => {
-    const na = itemDisplayName(a), nb = itemDisplayName(b);
-    return na.localeCompare(nb);
-  });
+  return items.slice().sort((a,b) =>
+    itemDisplayName(a).localeCompare(itemDisplayName(b))
+  );
 }
 
 function computeSeal(items){
+  // Only count non-archived items for seal
   if (!items || items.length === 0) return false;
   return items.every(it => !!it.app_list_item_state?.checked);
 }
@@ -160,10 +171,11 @@ function renderColumns(){
   els.columnsGrid.innerHTML = "";
   for (const col of LIST_ORDER){
     const listId = STATE.listIdBySlug.get(col.slug);
-    const listItems = STATE.itemsByListId.get(listId) ?? [];
-    const sorted = sortItems(listItems);
-    const sealOn = computeSeal(sorted);
-    const checkedCount = sorted.filter(x => !!x.app_list_item_state?.checked).length;
+    // Filter out items archived to log
+    const allItems = STATE.itemsByListId.get(listId) ?? [];
+    const visibleItems = sortItems(allItems.filter(it => !isArchivedToLog(it)));
+    const sealOn = computeSeal(visibleItems);
+    const checkedCount = visibleItems.filter(x => !!x.app_list_item_state?.checked).length;
 
     const colEl = document.createElement("div");
     colEl.className = "col";
@@ -172,7 +184,7 @@ function renderColumns(){
         <div class="colName">
           <div>${col.label}</div>
           <div style="color:var(--muted);font-weight:700;font-size:12px;">
-            ${checkedCount}/${sorted.length} checked
+            ${checkedCount}/${visibleItems.length} checked
           </div>
         </div>
         <div class="seal ${sealOn ? "on" : ""}" title="All items checked">
@@ -184,10 +196,10 @@ function renderColumns(){
     `;
 
     const itemsWrap = colEl.querySelector(".items");
-    if (sorted.length === 0){
-      itemsWrap.innerHTML = `<div class="empty">No items yet. Go to Edit / Add to add groceries.</div>`;
+    if (visibleItems.length === 0){
+      itemsWrap.innerHTML = `<div class="empty">No active items. Go to Edit / Add.</div>`;
     } else {
-      for (const it of sorted){
+      for (const it of visibleItems){
         const checked = !!it.app_list_item_state?.checked;
         const name = itemDisplayName(it);
         const meta = itemMetaText(it);
@@ -224,18 +236,13 @@ function renderColumns(){
           ev.stopPropagation();
           if (!confirm(`Remove "${name}" from ${col.label}?`)) return;
           try {
-            await supabase.from("app_list_items").delete().eq("id", it.id);
+            const { error } = await supabase.from("app_list_items").delete().eq("id", it.id);
+            if (error) throw error;
             await loadAll();
           } catch(e){
             console.error(e);
             alert("Failed to delete item.");
           }
-        });
-
-        itemEl.addEventListener("click", (ev) => {
-          if (ev.target === checkbox || ev.target === deleteBtn) return;
-          openLog(it.id, it.list_id);
-          setTab("edit");
         });
 
         itemsWrap.appendChild(itemEl);
@@ -271,36 +278,63 @@ async function setChecked(listItemId, shouldCheck, listId, catalogId, customText
   if (logErr) throw logErr;
 }
 
-async function openLog(listItemId, listId){
-  const { data: li } = await supabase
-    .from("app_list_items")
-    .select("id, catalog_id, custom_text, app_food_catalog(name_pt)")
-    .eq("id", listItemId)
-    .single();
+async function renderLogTab(){
+  els.logGrid.innerHTML = `<div class="smallHint">Loading...</div>`;
 
-  const name = li?.catalog_id ? li.app_food_catalog?.name_pt : li?.custom_text;
-  const listName = STATE.lists.find(l => l.id === listId)?.display_name ?? "?";
-  els.logMeta.textContent = `Item: ${name} • List: ${listName}`;
+  const listIds = STATE.lists.map(l => l.id);
+  if (listIds.length === 0){ els.logGrid.innerHTML = ""; return; }
 
-  const { data: logs } = await supabase
+  // Load all log entries with item name info
+  const { data: logs, error } = await supabase
     .from("app_list_item_log")
-    .select("event_type, event_at")
-    .eq("list_item_id", listItemId)
+    .select(`
+      id, event_type, event_at, list_id, catalog_id, custom_text,
+      app_food_catalog ( name_pt, name_en ),
+      app_lists ( display_name )
+    `)
+    .in("list_id", listIds)
+    .order("event_at", { ascending: false })
     .order("created_at", { ascending: false });
 
-  els.logScroll.innerHTML = "";
-  if (!logs || logs.length === 0){
-    els.logScroll.innerHTML = `<div class="empty">No log events yet.</div>`;
-    return;
+  if (error){ console.error(error); els.logGrid.innerHTML = `<div class="empty">Failed to load log.</div>`; return; }
+
+  // Group by list
+  const byList = new Map();
+  for (const col of LIST_ORDER) byList.set(col.slug, []);
+
+  for (const entry of logs ?? []){
+    const list = STATE.lists.find(l => l.id === entry.list_id);
+    if (!list) continue;
+    byList.get(list.slug)?.push(entry);
   }
-  for (const lg of logs){
-    const line = document.createElement("div");
-    line.className = "logLine";
-    line.innerHTML = `
-      <span style="font-weight:800;color:var(--ink);">${lg.event_type === "checked" ? "CHECKED" : "UNCHECKED"}</span>
-      <span class="tag ${lg.event_type}">${lg.event_at}</span>
-    `;
-    els.logScroll.appendChild(line);
+
+  els.logGrid.innerHTML = "";
+  for (const col of LIST_ORDER){
+    const entries = byList.get(col.slug) ?? [];
+    const colEl = document.createElement("div");
+    colEl.className = "logCol";
+    colEl.innerHTML = `<h3>${col.label}</h3><div class="logScroll"></div>`;
+    const scroll = colEl.querySelector(".logScroll");
+
+    if (entries.length === 0){
+      scroll.innerHTML = `<div class="empty">No log entries yet.</div>`;
+    } else {
+      for (const lg of entries){
+        const name = lg.catalog_id
+          ? (lg.app_food_catalog?.name_pt ?? "item")
+          : (lg.custom_text ?? "item");
+
+        const line = document.createElement("div");
+        line.className = "logLine";
+        line.innerHTML = `
+          <span class="itemName" title="${name}">${name}</span>
+          <span class="tag ${lg.event_type}">${lg.event_type === "checked" ? "✓" : "✗"} ${lg.event_at}</span>
+        `;
+        scroll.appendChild(line);
+      }
+    }
+
+    els.logGrid.appendChild(colEl);
   }
 }
 
@@ -334,7 +368,6 @@ async function addItem(){
   let finalListId = STATE.listIdBySlug.get(targetSlug);
   if (!finalListId){ alert("List not found."); return; }
 
-  // If it's a known catalog food and user isn't already targeting Main, prompt them
   if (matched && targetSlug !== "main"){
     const goToMain = confirm(
       `"${matched.namePT} / ${matched.nameEN}" is a shared-base food.\n\nAdd to Main (Shared) instead of "${STATE.lists.find(l=>l.slug===targetSlug)?.display_name}"?\n\nOK = Add to Main   Cancel = Keep in personal list`
@@ -347,11 +380,8 @@ async function addItem(){
     if (!catalog){ alert("Catalog entry missing — re-run supabase.sql."); return; }
 
     const { data: existing } = await supabase
-      .from("app_list_items")
-      .select("id")
-      .eq("list_id", finalListId)
-      .eq("catalog_id", catalog.id)
-      .maybeSingle();
+      .from("app_list_items").select("id")
+      .eq("list_id", finalListId).eq("catalog_id", catalog.id).maybeSingle();
 
     const listItemId = existing?.id ?? (await supabase
       .from("app_list_items")
@@ -361,11 +391,8 @@ async function addItem(){
     if (listItemId) await ensureStateRow(listItemId);
   } else {
     const { data: existing } = await supabase
-      .from("app_list_items")
-      .select("id")
-      .eq("list_id", finalListId)
-      .eq("custom_text", norm)
-      .maybeSingle();
+      .from("app_list_items").select("id")
+      .eq("list_id", finalListId).eq("custom_text", norm).maybeSingle();
 
     const listItemId = existing?.id ?? (await supabase
       .from("app_list_items")
