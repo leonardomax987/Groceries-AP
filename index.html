@@ -105,12 +105,14 @@
 
     .viewArea,
     .editArea,
+    .receiptArea,
     .logArea {
       display: none;
     }
 
     .viewArea.active,
     .editArea.active,
+    .receiptArea.active,
     .logArea.active {
       display: block;
     }
@@ -144,7 +146,6 @@
       padding: 12px;
     }
 
-    /* Important: lets the ⋮ dropdown appear outside its column */
     .col {
       overflow: visible;
     }
@@ -354,7 +355,8 @@
     }
 
     select,
-    textarea {
+    textarea,
+    input[type="file"] {
       border: 1px solid rgba(31, 42, 31, .18);
       background: #fff;
       border-radius: 12px;
@@ -453,6 +455,120 @@
       font-size: 12px;
       line-height: 1.35;
     }
+
+    .receiptFormGrid {
+      display: grid;
+      grid-template-columns: minmax(210px, .8fr) minmax(250px, 1.2fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    @media (max-width: 700px) {
+      .receiptFormGrid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .receiptListChoices {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(110px, 1fr));
+      gap: 8px;
+      padding-top: 4px;
+    }
+
+    .receiptChoice {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 9px;
+      border: 1px solid rgba(31, 42, 31, .12);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, .55);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .receiptChoice input {
+      accent-color: var(--green-600);
+    }
+
+    .receiptGallery {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    @media (max-width: 950px) {
+      .receiptGallery {
+        grid-template-columns: repeat(2, minmax(220px, 1fr));
+      }
+    }
+
+    @media (max-width: 600px) {
+      .receiptGallery {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .receiptCard {
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: rgba(251, 247, 234, .84);
+      box-shadow: var(--shadow);
+    }
+
+    .receiptImageLink {
+      display: block;
+      background: #e7e0d0;
+    }
+
+    .receiptImage {
+      display: block;
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+      transition: transform .2s ease;
+    }
+
+    .receiptImageLink:hover .receiptImage {
+      transform: scale(1.02);
+    }
+
+    .receiptInfo {
+      padding: 12px;
+    }
+
+    .receiptTitle {
+      font-weight: 850;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .receiptMeta {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .receiptLists {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 9px;
+    }
+
+    .receiptListTag {
+      padding: 4px 7px;
+      border: 1px solid rgba(31, 107, 70, .22);
+      border-radius: 999px;
+      background: rgba(31, 107, 70, .08);
+      color: var(--green-700);
+      font-size: 10px;
+      font-weight: 800;
+    }
   </style>
 </head>
 
@@ -463,13 +579,13 @@
         <h1>🛒 Roommates Groceries</h1>
         <div class="sub">
           Shared Main list plus personal lists for Marcos, Leo, Rafa, Alex, and Igor.
-          Items checked today stay visible; checked items from earlier days appear only in Log.
         </div>
       </div>
 
       <div class="tabs" role="tablist" aria-label="App sections">
         <button class="tab" id="tabView" type="button" aria-selected="true">View / Check</button>
         <button class="tab" id="tabEdit" type="button" aria-selected="false">Edit / Add</button>
+        <button class="tab" id="tabReceipts" type="button" aria-selected="false">Receipts</button>
         <button class="tab" id="tabLog" type="button" aria-selected="false">Log</button>
       </div>
     </header>
@@ -506,10 +622,76 @@
           </div>
 
           <div class="smallHint">
-            You can paste a full shopping list here. Known shared foods, such as arroz/rice or
-            massa/macarrão/pasta, will ask whether to add them to Main or keep them in the selected personal list.
+            You can paste a full shopping list here.
           </div>
         </div>
+      </section>
+
+      <section class="receiptArea" id="receiptArea">
+        <div class="panel">
+          <div class="receiptFormGrid">
+            <div>
+              <label>
+                Who bought the groceries?
+                <select id="receiptBuyer">
+                  <option value="">Choose a roommate</option>
+                  <option value="Marcos">Marcos</option>
+                  <option value="Leo">Leo</option>
+                  <option value="Rafa">Rafa</option>
+                  <option value="Alex">Alex</option>
+                  <option value="Igor">Igor</option>
+                </select>
+              </label>
+
+              <div style="height: 12px;"></div>
+
+              <label>
+                Receipt image
+                <input
+                  id="receiptImageInput"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/heic"
+                />
+              </label>
+
+              <div class="smallHint">
+                JPG, PNG, WEBP, or HEIC. Maximum 10 MB.
+              </div>
+            </div>
+
+            <div>
+              <label>
+                Which lists were bought?
+                <div class="receiptListChoices" id="receiptListChoices"></div>
+              </label>
+
+              <div style="height: 12px;"></div>
+
+              <label>
+                Optional note
+                <textarea
+                  id="receiptNote"
+                  style="min-height: 92px;"
+                  placeholder="Example: Costco run, paid $72.45. Main + Leo + Rafa."
+                ></textarea>
+              </label>
+            </div>
+          </div>
+
+          <div class="rightActions">
+            <div class="smallHint">
+              Uploaded receipts are visible to everyone with the grocery-app link.
+            </div>
+            <button class="btn primary" id="btnUploadReceipt" type="button">Upload receipt</button>
+          </div>
+        </div>
+
+        <div class="rightActions" style="margin-top: 0; margin-bottom: 12px;">
+          <div class="smallHint">Click a receipt image to open the full-size version.</div>
+          <button class="btn" id="btnRefreshReceipts" type="button">🔄 Refresh receipts</button>
+        </div>
+
+        <div class="receiptGallery" id="receiptGallery"></div>
       </section>
 
       <section class="logArea" id="logArea">
@@ -526,5 +708,6 @@
   </div>
 
   <script type="module" src="./app.js"></script>
+  <script type="module" src="./receipts.js"></script>
 </body>
 </html>
