@@ -100,7 +100,8 @@ function clearReceiptForm() {
   els.receiptImageInput.value = "";
   els.receiptNote.value = "";
 
-  els.receiptListChoices.querySelectorAll("input:checked")
+  els.receiptListChoices
+    .querySelectorAll("input:checked")
     .forEach(input => {
       input.checked = false;
     });
@@ -179,11 +180,13 @@ async function uploadReceipt() {
         note: note || null,
       });
 
-    if (receiptError) throw receiptError;
+    if (receiptError) {
+      await supabase.storage.from("receipts").remove([path]);
+      throw receiptError;
+    }
 
     clearReceiptForm();
     await loadReceipts();
-
     alert("Receipt uploaded successfully.");
   } catch (error) {
     console.error(error);
@@ -191,6 +194,42 @@ async function uploadReceipt() {
   } finally {
     els.btnUploadReceipt.disabled = false;
     els.btnUploadReceipt.textContent = "Upload receipt";
+  }
+}
+
+async function deleteReceipt(receipt, deleteButton) {
+  const shouldDelete = confirm(
+    `Delete ${receipt.buyer}'s receipt from ${formatDate(receipt.created_at)}?\n\nThis cannot be undone.`
+  );
+
+  if (!shouldDelete) return;
+
+  deleteButton.disabled = true;
+  deleteButton.textContent = "Deleting...";
+
+  try {
+    const { error: databaseError } = await supabase
+      .from("app_receipts")
+      .delete()
+      .eq("id", receipt.id);
+
+    if (databaseError) throw databaseError;
+
+    const { error: storageError } = await supabase
+      .storage
+      .from("receipts")
+      .remove([receipt.image_path]);
+
+    if (storageError) {
+      console.error("Receipt record was deleted, but image-file deletion failed:", storageError);
+    }
+
+    await loadReceipts();
+  } catch (error) {
+    console.error(error);
+    alert("Could not delete this receipt. Make sure you ran the receipt-delete Supabase SQL policy.");
+    deleteButton.disabled = false;
+    deleteButton.textContent = "Delete receipt";
   }
 }
 
@@ -271,8 +310,22 @@ async function loadReceipts() {
         ` : ""}
 
         <div class="receiptLists">${listTags}</div>
+
+        <button
+          class="btn"
+          type="button"
+          style="margin-top: 12px; color: #b03a2e;"
+        >
+          Delete receipt
+        </button>
       </div>
     `;
+
+    const deleteButton = card.querySelector("button");
+
+    deleteButton.addEventListener("click", () => {
+      deleteReceipt(receipt, deleteButton);
+    });
 
     els.receiptGallery.appendChild(card);
   }
